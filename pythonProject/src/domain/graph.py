@@ -3,106 +3,77 @@ from __future__ import annotations
 from collections.abc import Iterable
 
 
-class Graph:
-    def __init__(self, vertices: int = 0, directed: bool = True):
+class UndirectedGraph:
+    def __init__(self, vertices: int = 0):
         if vertices < 0:
             raise ValueError("The number of vertices must be non-negative")
 
-        self._directed = directed
-        self._outbound: dict[int, dict[int, int]] = {index: {} for index in range(vertices)}
-        self._inbound: dict[int, dict[int, int]] = {index: {} for index in range(vertices)}
+        self._neighbors: dict[int, dict[int, int]] = {index: {} for index in range(vertices)}
         self._costs: dict[tuple[int, int], int] = {}
         self._edge_count = 0
 
-    def is_directed(self) -> bool:
-        return self._directed
-
     def has_vertex(self, vertex: int) -> bool:
-        return vertex in self._outbound
+        return vertex in self._neighbors
 
     def vertex_count(self) -> int:
-        return len(self._outbound)
+        return len(self._neighbors)
 
     def edge_count(self) -> int:
         return self._edge_count
 
     def parse_vertices(self) -> list[int]:
-        return sorted(self._outbound)
+        return sorted(self._neighbors)
 
-    def parse_outbound_neighbors(self, vertex: int) -> list[int]:
+    def parse_neighbors(self, vertex: int) -> list[int]:
         self._check_vertex(vertex)
-        return sorted(self._outbound[vertex])
+        return sorted(self._neighbors[vertex])
 
-    def parse_inbound_neighbors(self, vertex: int) -> list[int]:
+    def degree(self, vertex: int) -> int:
         self._check_vertex(vertex)
-        return sorted(self._inbound[vertex])
-
-    def get_out_degree(self, vertex: int) -> int:
-        self._check_vertex(vertex)
-        return len(self._outbound[vertex])
-
-    def get_in_degree(self, vertex: int) -> int:
-        self._check_vertex(vertex)
-        return len(self._inbound[vertex])
+        return len(self._neighbors[vertex])
 
     def add_vertex(self, vertex: int | None = None) -> int:
         if vertex is None:
-            vertex = 0 if not self._outbound else max(self._outbound) + 1
+            vertex = 0 if not self._neighbors else max(self._neighbors) + 1
 
         if self.has_vertex(vertex):
             raise ValueError(f"Vertex {vertex} already exists")
 
-        self._outbound[vertex] = {}
-        self._inbound[vertex] = {}
+        self._neighbors[vertex] = {}
         return vertex
 
     def remove_vertex(self, vertex: int) -> None:
         self._check_vertex(vertex)
 
-        incident_edges = {(vertex, neighbor) for neighbor in self._outbound[vertex]}
-        incident_edges.update((neighbor, vertex) for neighbor in self._inbound[vertex])
+        for neighbor in list(self._neighbors[vertex]):
+            self.remove_edge(vertex, neighbor)
 
-        for u, v in list(incident_edges):
-            if self.is_edge(u, v):
-                self.remove_edge(u, v)
-
-        del self._outbound[vertex]
-        del self._inbound[vertex]
+        del self._neighbors[vertex]
 
     def is_edge(self, u: int, v: int) -> bool:
         self._check_vertex(u)
         self._check_vertex(v)
-        return v in self._outbound[u]
+        return v in self._neighbors[u]
 
     def add_edge(self, u: int, v: int, cost: int = 0) -> None:
         self._check_vertex(u)
         self._check_vertex(v)
+        if u == v:
+            raise ValueError("Loops are not allowed")
 
         edge_key = self._edge_key(u, v)
         if edge_key in self._costs:
-            connector = "->" if self._directed else "--"
-            raise ValueError(f"Edge {u} {connector} {v} already exists")
+            raise ValueError(f"Edge {u} -- {v} already exists")
 
-        self._outbound[u][v] = cost
-        self._inbound[v][u] = cost
-
-        if not self._directed:
-            self._outbound[v][u] = cost
-            self._inbound[u][v] = cost
-
+        self._neighbors[u][v] = cost
+        self._neighbors[v][u] = cost
         self._costs[edge_key] = cost
         self._edge_count += 1
 
     def remove_edge(self, u: int, v: int) -> None:
         self._check_edge(u, v)
-
-        del self._outbound[u][v]
-        del self._inbound[v][u]
-
-        if not self._directed:
-            del self._outbound[v][u]
-            del self._inbound[u][v]
-
+        del self._neighbors[u][v]
+        del self._neighbors[v][u]
         del self._costs[self._edge_key(u, v)]
         self._edge_count -= 1
 
@@ -112,30 +83,24 @@ class Graph:
 
     def set_edge_cost(self, u: int, v: int, cost: int) -> None:
         self._check_edge(u, v)
-
-        self._outbound[u][v] = cost
-        self._inbound[v][u] = cost
-
-        if not self._directed:
-            self._outbound[v][u] = cost
-            self._inbound[u][v] = cost
-
+        self._neighbors[u][v] = cost
+        self._neighbors[v][u] = cost
         self._costs[self._edge_key(u, v)] = cost
 
     def parse_edges(self) -> list[tuple[tuple[int, int], int]]:
         return sorted(self._costs.items())
 
-    def copy_graph(self) -> Graph:
-        graph_copy = Graph(0, directed=self._directed)
+    def copy_graph(self) -> UndirectedGraph:
+        graph_copy = UndirectedGraph(0)
         for vertex in self.parse_vertices():
             graph_copy.add_vertex(vertex)
         for (u, v), cost in self.parse_edges():
             graph_copy.add_edge(u, v, cost)
         return graph_copy
 
-    def subgraph(self, vertices: Iterable[int]) -> Graph:
+    def subgraph(self, vertices: Iterable[int]) -> UndirectedGraph:
         selected_vertices = set(vertices)
-        new_graph = Graph(0, directed=self._directed)
+        new_graph = UndirectedGraph(0)
 
         for vertex in sorted(selected_vertices):
             self._check_vertex(vertex)
@@ -153,10 +118,8 @@ class Graph:
 
     def _check_edge(self, u: int, v: int) -> None:
         if not self.is_edge(u, v):
-            connector = "->" if self._directed else "--"
-            raise ValueError(f"Edge {u} {connector} {v} does not exist")
+            raise ValueError(f"Edge {u} -- {v} does not exist")
 
-    def _edge_key(self, u: int, v: int) -> tuple[int, int]:
-        if self._directed:
-            return u, v
+    @staticmethod
+    def _edge_key(u: int, v: int) -> tuple[int, int]:
         return (u, v) if u <= v else (v, u)

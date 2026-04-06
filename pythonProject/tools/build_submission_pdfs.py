@@ -99,8 +99,7 @@ def main() -> None:
     docs_dir = base_dir / "docs"
 
     targets = [
-        "manual_execution_lab2",
-        "manual_execution_lab2_connected",
+        "manual_execution_problem4",
     ]
 
     for name in targets:

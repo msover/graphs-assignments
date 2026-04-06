@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from random import randint, sample
 
-from src.domain.graph import Graph
+from src.domain.graph import UndirectedGraph
 
 
 def make_random_graph(
@@ -10,8 +10,7 @@ def make_random_graph(
     edges: int,
     min_cost: int,
     max_cost: int,
-    directed: bool = True,
-) -> Graph:
+) -> UndirectedGraph:
     if vertices < 0:
         raise ValueError("The number of vertices must be non-negative")
     if edges < 0:
@@ -19,15 +18,12 @@ def make_random_graph(
     if min_cost > max_cost:
         raise ValueError("The minimum cost cannot be greater than the maximum cost")
 
-    max_edges = vertices * (vertices - 1)
-    if not directed:
-        max_edges //= 2
-
+    max_edges = vertices * (vertices - 1) // 2
     if edges > max_edges:
-        raise ValueError("Too many edges for the selected graph type")
+        raise ValueError("Too many edges for an undirected graph")
 
-    graph = Graph(vertices, directed=directed)
-    all_edges = _all_possible_edges(vertices, directed)
+    graph = UndirectedGraph(vertices)
+    all_edges = _all_possible_edges(vertices)
 
     for u, v in sample(all_edges, edges):
         graph.add_edge(u, v, randint(min_cost, max_cost))
@@ -35,12 +31,9 @@ def make_random_graph(
     return graph
 
 
-def _all_possible_edges(vertices: int, directed: bool) -> list[tuple[int, int]]:
+def _all_possible_edges(vertices: int) -> list[tuple[int, int]]:
     candidates: list[tuple[int, int]] = []
     for u in range(vertices):
-        for v in range(vertices):
-            if u == v:
-                continue
-            if directed or u < v:
-                candidates.append((u, v))
+        for v in range(u + 1, vertices):
+            candidates.append((u, v))
     return candidates

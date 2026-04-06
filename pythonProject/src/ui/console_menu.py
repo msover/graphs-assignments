@@ -1,24 +1,15 @@
 from __future__ import annotations
 
-from pathlib import Path
-
-from src.domain.graph import Graph
-from src.service.algorithms import (
-    connected_components_bfs,
-    connected_components_dfs,
-    format_path,
-    lowest_length_path_backward_bfs,
-    lowest_length_path_forward_bfs,
-)
+from src.domain.graph import UndirectedGraph
+from src.service.components import connected_components_bfs
 from src.service.graph_io import read_graph, write_graph
 from src.service.random_graph import make_random_graph
-from src.service.reports import generate_large_graph_report
 
 
 class ConsoleMenu:
-    def __init__(self, graph: Graph | None = None):
-        self._graph = graph if graph is not None else Graph()
-        self._backup: Graph | None = None
+    def __init__(self, graph: UndirectedGraph | None = None):
+        self._graph = graph if graph is not None else UndirectedGraph()
+        self._backup: UndirectedGraph | None = None
 
     def run(self) -> None:
         while True:
@@ -39,7 +30,7 @@ class ConsoleMenu:
             print()
 
     def _print_menu(self) -> None:
-        print("Graph Console")
+        print("Undirected Graph Console")
         print("1. Load graph from file")
         print("2. Save graph to file")
         print("3. Generate random graph")
@@ -56,11 +47,7 @@ class ConsoleMenu:
         print("14. Copy current graph to backup")
         print("15. Restore graph from backup copy")
         print("16. Print all edges")
-        print("17. Lowest length path by forward BFS")
-        print("18. Lowest length path by backward BFS")
-        print("19. Connected components by DFS")
-        print("20. Connected components by BFS")
-        print("21. Generate large graph path report")
+        print("17. Connected components by BFS")
         print("0. Exit")
 
     def _handle_option(self, option: str) -> None:
@@ -81,11 +68,7 @@ class ConsoleMenu:
             "14": self._backup_graph,
             "15": self._restore_graph,
             "16": self._print_edges,
-            "17": self._run_forward_bfs,
-            "18": self._run_backward_bfs,
-            "19": self._run_components_dfs,
-            "20": self._run_components_bfs,
-            "21": self._generate_large_report,
+            "17": self._run_components_bfs,
         }
 
         action = actions.get(option)
@@ -96,9 +79,8 @@ class ConsoleMenu:
 
     def _load_graph(self) -> None:
         file_name = input("File name: ").strip()
-        directed = self._read_graph_type()
-        self._graph = read_graph(file_name, directed=directed)
-        print(f"Loaded {'directed' if directed else 'undirected'} graph from {file_name}.")
+        self._graph = read_graph(file_name)
+        print(f"Loaded undirected graph from {file_name}.")
 
     def _save_graph(self) -> None:
         file_name = input("File name: ").strip()
@@ -106,17 +88,15 @@ class ConsoleMenu:
         print(f"Saved graph to {file_name}.")
 
     def _generate_random_graph(self) -> None:
-        directed = self._read_graph_type()
         vertices = self._read_int("Number of vertices: ")
         edges = self._read_int("Number of edges: ")
         min_cost = self._read_int("Minimum edge cost: ")
         max_cost = self._read_int("Maximum edge cost: ")
-        self._graph = make_random_graph(vertices, edges, min_cost, max_cost, directed=directed)
+        self._graph = make_random_graph(vertices, edges, min_cost, max_cost)
         print("Random graph generated.")
 
     def _show_summary(self) -> None:
-        graph_type = "directed" if self._graph.is_directed() else "undirected"
-        print(f"Type: {graph_type}")
+        print("Type: undirected")
         print(f"Vertices: {self._graph.vertex_count()}")
         print(f"Edges: {self._graph.edge_count()}")
 
@@ -130,18 +110,14 @@ class ConsoleMenu:
 
     def _inspect_vertex(self) -> None:
         vertex = self._read_int("Vertex: ")
-        inbound = self._graph.parse_inbound_neighbors(vertex)
-        outbound = self._graph.parse_outbound_neighbors(vertex)
-        print(f"In-degree: {self._graph.get_in_degree(vertex)}")
-        print(f"Out-degree: {self._graph.get_out_degree(vertex)}")
-        print("Inbound neighbors:", self._format_collection(inbound))
-        print("Outbound neighbors:", self._format_collection(outbound))
+        neighbors = self._graph.parse_neighbors(vertex)
+        print(f"Degree: {self._graph.degree(vertex)}")
+        print("Neighbors:", self._format_collection(neighbors))
 
     def _check_edge(self) -> None:
         u, v = self._read_edge()
         exists = self._graph.is_edge(u, v)
-        connector = "->" if self._graph.is_directed() else "--"
-        print(f"Edge {u} {connector} {v} exists: {'yes' if exists else 'no'}")
+        print(f"Edge {u} -- {v} exists: {'yes' if exists else 'no'}")
 
     def _show_edge_cost(self) -> None:
         u, v = self._read_edge()
@@ -191,33 +167,11 @@ class ConsoleMenu:
             print("The graph has no edges.")
             return
 
-        connector = "->" if self._graph.is_directed() else "--"
         for (u, v), cost in edges:
-            print(f"{u} {connector} {v} (cost = {cost})")
-
-    def _run_forward_bfs(self) -> None:
-        path, length = lowest_length_path_forward_bfs(self._graph, *self._read_edge())
-        self._print_path_result(path, length)
-
-    def _run_backward_bfs(self) -> None:
-        path, length = lowest_length_path_backward_bfs(self._graph, *self._read_edge())
-        self._print_path_result(path, length)
-
-    def _run_components_dfs(self) -> None:
-        self._print_components(connected_components_dfs(self._graph), "DFS")
+            print(f"{u} -- {v} (cost = {cost})")
 
     def _run_components_bfs(self) -> None:
         self._print_components(connected_components_bfs(self._graph), "BFS")
-
-    def _generate_large_report(self) -> None:
-        base_dir = Path(__file__).resolve().parents[2]
-        default_input = base_dir / "data" / "large"
-        default_output = base_dir / "docs" / "large_graph_results.md"
-
-        input_dir = input(f"Input directory [{default_input}]: ").strip() or str(default_input)
-        output_file = input(f"Output file [{default_output}]: ").strip() or str(default_output)
-        report_path = generate_large_graph_report(input_dir, output_file)
-        print(f"Report written to {report_path}.")
 
     @staticmethod
     def _read_int(prompt: str) -> int:
@@ -229,29 +183,13 @@ class ConsoleMenu:
         return u, v
 
     @staticmethod
-    def _read_graph_type() -> bool:
-        answer = input("Graph type [d/u]: ").strip().lower()
-        if answer not in {"d", "u"}:
-            raise ValueError("Graph type must be d or u")
-        return answer == "d"
-
-    @staticmethod
     def _format_collection(values: list[int]) -> str:
         if not values:
             return "none"
         return " ".join(str(value) for value in values)
 
     @staticmethod
-    def _print_path_result(path: list[int], length: int) -> None:
-        if length == -1:
-            print("No path exists.")
-            return
-
-        print(f"Length: {length}")
-        print(f"Path: {format_path(path)}")
-
-    @staticmethod
-    def _print_components(components: list[Graph], method: str) -> None:
+    def _print_components(components: list[UndirectedGraph], method: str) -> None:
         print(f"Connected components found by {method}: {len(components)}")
         for index, component in enumerate(components, start=1):
             print(

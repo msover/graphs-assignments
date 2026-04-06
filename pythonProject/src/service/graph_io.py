@@ -4,10 +4,10 @@ from io import TextIOWrapper
 from pathlib import Path
 from zipfile import ZipFile
 
-from src.domain.graph import Graph
+from src.domain.graph import UndirectedGraph
 
 
-def read_graph(file_name: str, directed: bool = True) -> Graph:
+def read_graph(file_name: str) -> UndirectedGraph:
     path = Path(file_name)
     lines = _read_lines(path)
     if not lines:
@@ -18,7 +18,7 @@ def read_graph(file_name: str, directed: bool = True) -> Graph:
         raise ValueError("The first line must contain the number of vertices and edges")
 
     vertices, edges = map(int, header)
-    graph = Graph(vertices, directed=directed)
+    graph = UndirectedGraph(vertices)
 
     if len(lines) - 1 < edges:
         raise ValueError("The input file ended before all edges were read")
@@ -34,7 +34,7 @@ def read_graph(file_name: str, directed: bool = True) -> Graph:
     return graph
 
 
-def write_graph(file_name: str, graph: Graph) -> None:
+def write_graph(file_name: str, graph: UndirectedGraph) -> None:
     path = Path(file_name)
     path.parent.mkdir(parents=True, exist_ok=True)
 
