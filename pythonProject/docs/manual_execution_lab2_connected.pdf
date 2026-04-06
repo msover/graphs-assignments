@@ -1,0 +1,288 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Count 3 /Kids [3 0 R 5 0 R 7 0 R] >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 9 0 R >> >> /Contents 4 0 R >>
+endobj
+4 0 obj
+<< /Length 1487 >>
+stream
+BT
+/F1 10 Tf
+48 790 Td
+14 TL
+(# Manual Execution for Problems 3 and 4) Tj
+T*
+() Tj
+T*
+(## Graph with 3 connected components) Tj
+T*
+() Tj
+T*
+(Source file: `data/manual/undirected_components_1.txt`) Tj
+T*
+() Tj
+T*
+(Vertices: `0 1 2 3 4 5 6 7`) Tj
+T*
+() Tj
+T*
+(Edges:) Tj
+T*
+(- 0 -- 1) Tj
+T*
+(- 1 -- 2) Tj
+T*
+(- 2 -- 3) Tj
+T*
+(- 3 -- 0) Tj
+T*
+(- 0 -- 2) Tj
+T*
+(- 4 -- 5) Tj
+T*
+(- 5 -- 6) Tj
+T*
+(- 4 -- 6) Tj
+T*
+() Tj
+T*
+(Vertex `7` is isolated.) Tj
+T*
+() Tj
+T*
+(### Problem 3: DFS connected components) Tj
+T*
+() Tj
+T*
+(Traversal:) Tj
+T*
+() Tj
+T*
+(| Step | Stack before pop | Popped | Visited after step |) Tj
+T*
+(| --- | --- | --- | --- |) Tj
+T*
+(| 1 | 0 | 0 | `0` |) Tj
+T*
+(| 2 | 3, 2, 1 | 1 | `0, 1` |) Tj
+T*
+(| 3 | 3, 2, 3, 2 | 2 | `0, 1, 2` |) Tj
+T*
+(| 4 | 3, 2, 3, 3 | 3 | `0, 1, 2, 3` |) Tj
+T*
+() Tj
+T*
+(First component: `{0, 1, 2, 3}`) Tj
+T*
+() Tj
+T*
+(Restart from the smallest unvisited vertex:) Tj
+T*
+() Tj
+T*
+(| Step | Stack before pop | Popped | Visited after step |) Tj
+T*
+(| --- | --- | --- | --- |) Tj
+T*
+(| 5 | 4 | 4 | `0, 1, 2, 3, 4` |) Tj
+T*
+(| 6 | 6, 5 | 5 | `0, 1, 2, 3, 4, 5` |) Tj
+T*
+(| 7 | 6, 6 | 6 | `0, 1, 2, 3, 4, 5, 6` |) Tj
+T*
+() Tj
+T*
+(Second component: `{4, 5, 6}`) Tj
+T*
+() Tj
+T*
+(Restart again:) Tj
+T*
+() Tj
+T*
+(| Step | Stack before pop | Popped | Visited after step |) Tj
+T*
+(| --- | --- | --- | --- |) Tj
+T*
+(| 8 | 7 | 7 | `0, 1, 2, 3, 4, 5, 6, 7` |) Tj
+T*
+() Tj
+T*
+(Third component: `{7}`) Tj
+T*
+() Tj
+T*
+(### Problem 4: BFS connected components) Tj
+T*
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 9 0 R >> >> /Contents 6 0 R >>
+endobj
+6 0 obj
+<< /Length 1468 >>
+stream
+BT
+/F1 10 Tf
+48 790 Td
+14 TL
+() Tj
+T*
+(Traversal:) Tj
+T*
+() Tj
+T*
+(| Step | Queue before pop | Popped | Visited after step |) Tj
+T*
+(| --- | --- | --- | --- |) Tj
+T*
+(| 1 | 0 | 0 | `0, 1, 2, 3` |) Tj
+T*
+(| 2 | 1, 2, 3 | 1 | `0, 1, 2, 3` |) Tj
+T*
+(| 3 | 2, 3 | 2 | `0, 1, 2, 3` |) Tj
+T*
+(| 4 | 3 | 3 | `0, 1, 2, 3` |) Tj
+T*
+() Tj
+T*
+(First component: `{0, 1, 2, 3}`) Tj
+T*
+() Tj
+T*
+(Restart from `4`:) Tj
+T*
+() Tj
+T*
+(| Step | Queue before pop | Popped | Visited after step |) Tj
+T*
+(| --- | --- | --- | --- |) Tj
+T*
+(| 5 | 4 | 4 | `0, 1, 2, 3, 4, 5, 6` |) Tj
+T*
+(| 6 | 5, 6 | 5 | `0, 1, 2, 3, 4, 5, 6` |) Tj
+T*
+(| 7 | 6 | 6 | `0, 1, 2, 3, 4, 5, 6` |) Tj
+T*
+() Tj
+T*
+(Second component: `{4, 5, 6}`) Tj
+T*
+() Tj
+T*
+(Restart from `7`:) Tj
+T*
+() Tj
+T*
+(| Step | Queue before pop | Popped | Visited after step |) Tj
+T*
+(| --- | --- | --- | --- |) Tj
+T*
+(| 8 | 7 | 7 | `0, 1, 2, 3, 4, 5, 6, 7` |) Tj
+T*
+() Tj
+T*
+(Third component: `{7}`) Tj
+T*
+() Tj
+T*
+(## Graph with 1 connected component) Tj
+T*
+() Tj
+T*
+(Source file: `data/manual/undirected_components_2.txt`) Tj
+T*
+() Tj
+T*
+(Edges:) Tj
+T*
+(- 0 -- 1) Tj
+T*
+(- 1 -- 2) Tj
+T*
+(- 2 -- 3) Tj
+T*
+(- 3 -- 4) Tj
+T*
+(- 4 -- 5) Tj
+T*
+(- 5 -- 0) Tj
+T*
+(- 0 -- 2) Tj
+T*
+(- 1 -- 4) Tj
+T*
+() Tj
+T*
+(### Problem 3: DFS connected components) Tj
+T*
+() Tj
+T*
+(Starting from `0`, the traversal reaches every vertex:) Tj
+T*
+() Tj
+T*
+(`0 -> 1 -> 2 -> 3 -> 4 -> 5`) Tj
+T*
+() Tj
+T*
+(Connected components: `{0, 1, 2, 3, 4, 5}`) Tj
+T*
+() Tj
+T*
+ET
+endstream
+endobj
+7 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 9 0 R >> >> /Contents 8 0 R >>
+endobj
+8 0 obj
+<< /Length 254 >>
+stream
+BT
+/F1 10 Tf
+48 790 Td
+14 TL
+(### Problem 4: BFS connected components) Tj
+T*
+() Tj
+T*
+(Starting from `0`, the queue expands in this order:) Tj
+T*
+() Tj
+T*
+(`0 -> 1 -> 2 -> 5 -> 3 -> 4`) Tj
+T*
+() Tj
+T*
+(Connected components: `{0, 1, 2, 3, 4, 5}`) Tj
+T*
+ET
+endstream
+endobj
+9 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 10
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000127 00000 n 
+0000000253 00000 n 
+0000001792 00000 n 
+0000001918 00000 n 
+0000003438 00000 n 
+0000003564 00000 n 
+0000003869 00000 n 
+trailer
+<< /Size 10 /Root 1 0 R >>
+startxref
+3939
+%%EOF
