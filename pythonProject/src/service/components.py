@@ -5,21 +5,21 @@ from collections import deque
 from src.domain.graph import UndirectedGraph
 
 
-def connected_components_bfs(graph: UndirectedGraph) -> list[UndirectedGraph]:
+def connectedComponentsBfs(graph: UndirectedGraph) -> list[UndirectedGraph]:
     visited: set[int] = set()
     components: list[UndirectedGraph] = []
 
-    for vertex in graph.parse_vertices():
+    for vertex in graph.parseVertices():
         if vertex in visited:
             continue
 
-        component_vertices = _collect_component_vertices(graph, vertex, visited)
-        components.append(graph.subgraph(component_vertices))
+        componentVertices = _collectComponentVertices(graph, vertex, visited)
+        components.append(graph.subGraph(componentVertices))
 
     return components
 
 
-def _collect_component_vertices(
+def _collectComponentVertices(
     graph: UndirectedGraph,
     start: int,
     visited: set[int],
@@ -30,7 +30,7 @@ def _collect_component_vertices(
 
     while queue:
         current = queue.popleft()
-        for neighbor in graph.parse_neighbors(current):
+        for neighbor in graph.parseNeighbors(current):
             if neighbor in visited:
                 continue
 

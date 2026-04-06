@@ -7,9 +7,9 @@ from zipfile import ZipFile
 from src.domain.graph import UndirectedGraph
 
 
-def read_graph(file_name: str) -> UndirectedGraph:
-    path = Path(file_name)
-    lines = _read_lines(path)
+def readGraph(fileName: str) -> UndirectedGraph:
+    path = Path(fileName)
+    lines = _readLines(path)
     if not lines:
         raise ValueError("The input file is empty")
 
@@ -29,36 +29,36 @@ def read_graph(file_name: str) -> UndirectedGraph:
             raise ValueError("Each edge line must contain start, end and cost")
 
         u, v, cost = map(int, parts)
-        graph.add_edge(u, v, cost)
+        graph.addEdge(u, v, cost)
 
     return graph
 
 
-def write_graph(file_name: str, graph: UndirectedGraph) -> None:
-    path = Path(file_name)
+def writeGraph(fileName: str, graph: UndirectedGraph) -> None:
+    path = Path(fileName)
     path.parent.mkdir(parents=True, exist_ok=True)
 
     with path.open("w", encoding="utf-8") as handle:
-        handle.write(f"{graph.vertex_count()} {graph.edge_count()}\n")
-        for (u, v), cost in graph.parse_edges():
+        handle.write(f"{graph.vertexCount()} {graph.edgeCount()}\n")
+        for (u, v), cost in graph.parseEdges():
             handle.write(f"{u} {v} {cost}\n")
 
 
-def _read_lines(path: Path) -> list[str]:
+def _readLines(path: Path) -> list[str]:
     if path.suffix == ".zip":
-        return _read_lines_from_zip(path)
+        return _readLinesFromZip(path)
 
     with path.open("r", encoding="utf-8") as handle:
         return [line.strip() for line in handle if line.strip()]
 
 
-def _read_lines_from_zip(path: Path) -> list[str]:
+def _readLinesFromZip(path: Path) -> list[str]:
     with ZipFile(path, "r") as archive:
         members = [name for name in archive.namelist() if not name.endswith("/")]
         if not members:
             raise ValueError("The zip archive does not contain a graph file")
 
-        member_name = sorted(members)[0]
-        with archive.open(member_name, "r") as raw_handle:
-            handle = TextIOWrapper(raw_handle, encoding="utf-8")
+        memberName = sorted(members)[0]
+        with archive.open(memberName, "r") as rawHandle:
+            handle = TextIOWrapper(rawHandle, encoding="utf-8")
             return [line.strip() for line in handle if line.strip()]

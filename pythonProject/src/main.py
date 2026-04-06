@@ -1,4 +1,4 @@
-from src.ui.console_menu import ConsoleMenu
+from src.ui.consoleMenu import ConsoleMenu
 
 
 def main() -> None:

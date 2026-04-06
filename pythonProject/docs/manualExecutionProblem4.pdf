@@ -9,7 +9,7 @@ endobj
 << /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 7 0 R >> >> /Contents 4 0 R >>
 endobj
 4 0 obj
-<< /Length 1451 >>
+<< /Length 1449 >>
 stream
 BT
 /F1 10 Tf
@@ -23,7 +23,7 @@ T*
 T*
 () Tj
 T*
-(Source file: `data/manual/undirected_components_1.txt`) Tj
+(Source file: `data/manual/undirectedComponents1.txt`) Tj
 T*
 () Tj
 T*
@@ -126,7 +126,7 @@ endobj
 << /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 7 0 R >> >> /Contents 6 0 R >>
 endobj
 6 0 obj
-<< /Length 484 >>
+<< /Length 482 >>
 stream
 BT
 /F1 10 Tf
@@ -134,7 +134,7 @@ BT
 14 TL
 () Tj
 T*
-(Source file: `data/manual/undirected_components_2.txt`) Tj
+(Source file: `data/manual/undirectedComponents2.txt`) Tj
 T*
 () Tj
 T*
@@ -185,11 +185,11 @@ xref
 0000000058 00000 n 
 0000000121 00000 n 
 0000000247 00000 n 
-0000001750 00000 n 
-0000001876 00000 n 
-0000002411 00000 n 
+0000001748 00000 n 
+0000001874 00000 n 
+0000002407 00000 n 
 trailer
 << /Size 8 /Root 1 0 R >>
 startxref
-2481
+2477
 %%EOF
